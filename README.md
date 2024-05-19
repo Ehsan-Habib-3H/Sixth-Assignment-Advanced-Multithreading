@@ -1,62 +1,47 @@
-# Advanced Multithreading
+# Advanced Multithreading: Detailed report for pi(π) number calculation with Multi-Threaded program
 
+[//]: # (![]&#40;assets/pi.webp?raw=ture&#41;)
+[//]: # (![]&#40;assets/pi.png&#41;)
+<p align="center">
+<img src="assets/pi.webp" width = 800 >
+</p>
+Pi number is known as ratio of a circle's circumference to its diameter which today has been calculated up to 105 trillion digits.
+<br>Here we're attempting to find pi number with a multi-threaded program and discuss around pros and cons of each approach.
+<br> At last, I'll give brief explanation of how semaphore in java works (:
 
-## Introduction
-In this assignment, you are given three problems focused on various areas of multithreaded programming. Solve each exercise according to the provided guidelines.
+## Finding an algorithm for pi calculation
+### **First Approach: Leibniz formula**
+The Leibniz formula is indeed a compelling solution for approximating π due to its simplicity and straightforward mathematical operations.
 
+[//]: # (![]&#40;assets/simplicity.png&#41;)
+<img src="assets/simplicity.png" width="512">
+<br>
+As expected it driven from the Taylor series for the inverse tangent function for the value of 1 (arctan(1) = π/4)
 
-## Objectives
-- Review the concepts of multithreaded programming and utilize them correctly
-- Research Pi calculation algorithms
-- Familiarize yourself with the Semaphore, CountDownLatch, and BigDecimal classes
-- Learn the basics of writing a proper project report
+![](assets/leibniz.png)
+### The Reality Check: Dead end
+After implementation, I noticed it was a nice practice unless you're expecting 1000 floating points🤦‍♂️
+<br>Number of digits outputted after 20 sec = ~20. Tho, it's fine to put your pc days and nights on to achieve the desired   result 🌚
 
+### **Here we go: Bailey–Borwein–Plouffe formula (BBP)**
+For the final program, I’ve employed the Bailey–Borwein–Plouffe (BBP) formula, a remarkable method for calculating π. Closer look to formula:
+![](assets/bbp.png)
+## Implementation Details
+- **Big Decimal Objects:** All numerical values are stored as big decimal objects to maintain precision.
+- **Multithreading:** I’ve set up a thread pool with 5 threads. Each thread is tasked with computing 100 terms of the BBP series.
+  Thread pool is used to reduce the complexity of thread management and increase performance by reducing the number of context switches.
+- **Total Computation:** Collectively, the threads compute 2000 terms of the series, harnessing the power of parallel processing to expedite the calculation.
 
-## Tasks
-1. Fork this repository and clone the fork to your local machine. Ensure to create a new Git branch before starting your work
-2. Complete the following exercises based on the instructions provided:
+## Semaphore
 
-   - `Calculate Pi`: Calculate the value of Pi up to 1000 digits after the floating point. Find 
-     more instructions in the `PiCalculator` class.
-   - `Semaphore`: Solve a synchronization problem using a Semaphore that allows 2 threads to enter the critical section.  Find more instructions in the `Controller` class.
-3. Write a comprehensive report on the assignment.
+is used to control access to a shared resource by multiple threads and avoid critical section problems (Thread interruption, race condition). 
+In this project the access to the `Resource` class is limited to 2 at a time.
 
-
-## Notes
-- You can find unit tests for the `Calculate Pi` exercise. Use these to ensure you've implemented the code correctly.
-- You are NOT allowed to use any other synchronization tool for the `Semaphore` exercise. Only Semaphores may be used.
-
-
-## Report
-You are expected to write a detailed report on the assignment. This is the most important task 
-expected of you, and over 50% of the assignment's final grade depends on it. Explain the 
-solutions you chose for each exercise but try to focus on the `Calculate Pi` problem.
-<br>You MUST include the following details in your report:
-- The solutions you chose for each exercise and how you implemented them
-- All mathematical algorithms you tried and used for the `Calculate Pi` problem
-- Details on the final algorithm you chose for calculating Pi and its advantages over other algorithms
-- Explanation regarding Semaphore and its use cases
-- All References and Resources (include links where possible)
-
-Your report can either be in the format of a PDF or Markdown file (Markdown is preferred). 
-Including graphs, charts, and other appropriate visuals can grant bonus points.
-
-
-
-## Evaluation
-- Your code should compile and run without any errors
-- Your code should be well-organized, readable, properly commented and should follow clean code principles
-- Your code should pass all the provided unit tests
-- You should use Git for version control and include meaningful commit messages
-- Your report should be as comprehensive as possible
-
-
-## Submission
-1. Add your mentor as a contributor to the project.
-2. Create a `develop` branch for implementing features.
-3. Use Git for regular code commits.
-4. Push your code and your report to the remote repository.
-5. Submit a pull request to merge the `develop` branch with `main`.
-
-
-The deadline for submitting your code is Friday, May 17 (28th of Ordibehesht). Good luck!
+## References
+- **Pi Calculation**
+  - [**Wikipedia** - Leibniz formula for π](https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80) 
+  - [**Wikipedia** - Bailey–Borwein–Plouffe formula](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula)
+  - [**Ioflood** - Java BigDecimal Class](https://ioflood.com/blog/java-bigdecimal/#:~:text=BigDecimal%20is%20used%20in%20Java,and%20division%20with%20high%20precision.&text=In%20this%20example%2C%20we%20create,bd%20using%20the%20add%20method.)
+- **Semaphore**
+  - [**Wikipedia** - Semaphore](https://en.wikipedia.org/wiki/Semaphore_(programming))
+  - [**GeeksforGeeks** - Semaphore in Java](https://www.geeksforgeeks.org/semaphore-in-java/)
