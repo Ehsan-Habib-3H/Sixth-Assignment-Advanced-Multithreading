@@ -1,6 +1,8 @@
 package sbu.cs.CalculatePi;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
@@ -24,11 +26,11 @@ public class PiCalculator {
 
     public static String calculate(int floatingPoint) {
         AtomicReference<BigDecimal> result = new AtomicReference<>(new BigDecimal("0"));
-        ExecutorService myFThreadPool = Executors.newFixedThreadPool(10);
-        for (int i = 0; i <= 100; ++i) {
+        ExecutorService myFThreadPool = Executors.newFixedThreadPool(5);
+        for (int i = 0; i <= 20; ++i) {
             final int index = i;
             myFThreadPool.execute(() -> {
-                result.updateAndGet(current -> current.add(partialCalculation(index * 1000 + 1)));
+                result.updateAndGet(current -> current.add(partialCalculation(index * 100)));
             });
         }
         myFThreadPool.shutdown();
@@ -37,22 +39,35 @@ public class PiCalculator {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return result.get().toString();
+        return result.get().toString().substring(0,floatingPoint+2);
     }
 
-    private static BigDecimal partialCalculation(int start)
-    {
+    private static BigDecimal partialCalculation(int start) {
+        MathContext mc = new MathContext(1001);
         BigDecimal bigDecimal = new BigDecimal("0");
-        for(int i =start;i<=start+1000;++i)
-        {
-            bigDecimal = bigDecimal.add(new BigDecimal((i%2==1? "" : "-")+ String.valueOf((double) 4/(2*i-1))));
+        for (int i = start; i < start + 100; ++i) {
+            BigDecimal a = new BigDecimal("0.0625").pow(i);
+            BigDecimal b = new BigDecimal("4").divide(new BigDecimal((8*i+1)), mc);
+            BigDecimal c = new BigDecimal("-2").divide(new BigDecimal((8*i+4)), mc);
+            BigDecimal d = new BigDecimal("-1").divide(new BigDecimal((8*i+5)), mc);
+            BigDecimal e = new BigDecimal("-1").divide(new BigDecimal((8*i+6)), mc);
+            BigDecimal sum = a.multiply(b.add(c, mc).add(d).add(e), mc);
+            bigDecimal = bigDecimal.add(sum);
         }
         return bigDecimal;
     }
 
     public static void main(String[] args) {
-        System.out.println(calculate(1));
-        // Use the main function to test the code yourself
+//        System.out.println(calculate(5));
+//        for (int i = 0; i <  1000; ++i) {
+//            BigDecimal a = new BigDecimal("0.0625").pow(i);
+//            BigDecimal b = new BigDecimal("4").divide(new BigDecimal((8*i+1)), mc);
+//            BigDecimal c = new BigDecimal("-2").divide(new BigDecimal((8*i+4)), mc);
+//            BigDecimal d = new BigDecimal("-1").divide(new BigDecimal((8*i+5)), mc);
+//            BigDecimal e = new BigDecimal("-1").divide(new BigDecimal((8*i+6)), mc);
+//            BigDecimal sum = a.multiply(b.add(c, mc).add(d).add(e), mc);
+//            bigDecimal = bigDecimal.add(sum);
+//        }
     }
 
 }
